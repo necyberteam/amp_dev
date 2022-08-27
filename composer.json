@@ -1,0 +1,9 @@
+{
+  "name": "amp/amp_dev",
+  "type": "drupal-custom-module",
+  "description": "Initiate settings necessary in dev site.",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0-or-later",
+  "homepage": "https://github.com/necyberteam/amp_dev",
+  "minimum-stability": "dev"
+}
