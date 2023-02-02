@@ -14,5 +14,6 @@ function amp_dev_install() {
   $this_user->set('field_user_last_name', 'Ma');
   $this_user->set('field_institution', 'MGHPCC');
   $this_user->save();
+  // Disable constant contact cron run.
+  \Drupal::state()->set('access_affinitygroup.alloc_cron_disable', TRUE);
 }
-
