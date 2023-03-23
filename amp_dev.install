@@ -1,10 +1,17 @@
 <?php
+use Drupal\Core\Link;
+use Drupal\Core\Url;
+
+
 
 /**
  * @file
  * Initiate dev site.
  */
 
+use Drupal\webform\Entity\Webform;
+use Drupal\webform\Entity\WebformSubmission;
+use Drupal\webform\WebformSubmissionForm;
 /**
  * Implements hook_install().
  */
@@ -17,4 +24,39 @@ function amp_dev_install() {
   \Drupal::service('module_installer')->uninstall(['captcha','image_captcha', 'recaptcha']);
   // Disable constant contact cron run.
   \Drupal::state()->set('access_affinitygroup.alloc_cron_disable', TRUE);
+
+
+  #creating a resource that has a tag on it
+  // Example IDs
+  $webform_id = 'resource';
+  $webform = Webform::load($webform_id);
+  #kint($webform);
+  // Create webform submission.
+  $values = [
+    'webform_id' => $webform->id(),
+    'data' => [
+      'approved' => 'Approved',
+      'title' => 'Cybersecurity Resource Center',
+      'category' => 'learning',
+      #ai tag
+      'tags' => ['271'],
+      #beginner
+      'skill_level' => ['304'],
+      'description' => 'The Cybersecurity Resource Center is one of the best around.
+      They are at your service 24/7 and can help very quickly. They are great at what they do!',
+      #'link_to_resource' =>[
+        #'#type' => 'link',
+        #'#title' => 'https://www.opm.gov/cybersecurity/',
+        #'#url' => Url::fromUri('https://www.opm.gov/cybersecurity/'),
+        #'terms' => '0',
+        #]
+      #'link_to_resource' =>[
+        #Link::fromTextAndUrl('https://www.opm.gov/cybersecurity/',Url::fromUri('https://www.opm.gov/cybersecurity/')),
+      #],
+    ]
+  ];
+
+  /** @var \Drupal\webform\WebformSubmissionInterface $webform_submission */
+  $webform_submission = WebformSubmission::create($values);
+  $webform_submission->save();
 }
