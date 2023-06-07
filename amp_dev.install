@@ -1,5 +1,9 @@
 <?php
 
+use Drupal\user\Entity\User;
+use Drupal\webform\Entity\Webform;
+use Drupal\webform\Entity\WebformSubmission;
+
 /**
  * @file
  * Initiate dev site.
@@ -9,12 +13,155 @@
  * Implements hook_install().
  */
 function amp_dev_install() {
-  $this_user = \Drupal::entityTypeManager()->getStorage('user')->load(100);
-  $this_user->set('field_user_first_name', 'Julie');
-  $this_user->set('field_user_last_name', 'Ma');
-  $this_user->set('field_institution', 'MGHPCC');
-  $this_user->save();
-  \Drupal::service('module_installer')->uninstall(['captcha','image_captcha', 'recaptcha']);
+  \Drupal::service('module_installer')->uninstall(['captcha', 'image_captcha', 'recaptcha']);
   // Disable constant contact cron run.
   \Drupal::state()->set('access_affinitygroup.alloc_cron_disable', TRUE);
+
+  amp_dev_install_create_dummy_ci_links();
+  amp_dev_install_update_dummy_users();
+  amp_dev_install_update_user_100();
+}
+
+function amp_dev_install_create_dummy_ci_links() {
+
+  $dummy_ci_links = [
+    ['title' => 'ci-link-for-user-200', 'uid' => 200],
+    ['title' => 'ci-link-for-user-201', 'uid' => 201],
+  ];
+
+  foreach ($dummy_ci_links as $dummy_ci_link) {
+    $webform_id = 'resource';
+
+    $webform = Webform::load($webform_id);
+    if ($webform->hasSubmissions()) {
+      $query = \Drupal::entityQuery('webform_submission')
+        ->condition('webform_id', $webform_id);
+      $result = $query->execute();
+      foreach ($result as $item) {
+        $submission = \Drupal\webform\Entity\WebformSubmission::load($item);
+        $submission_data = $submission->getData();
+
+        if ($submission_data['title'] === $dummy_ci_link['title']) {
+          $submission->delete();
+        }
+      }
+    }
+
+    // Create webform submission.
+    $values = [
+      'webform_id' => $webform->id(),
+      'uid' => $dummy_ci_link['uid'],
+      'uri' => '/form/resource',
+      'data' => [
+        'title' => $dummy_ci_link['title'],
+        'category' => 'learning',
+        'approved' => 1,
+      ],
+    ];
+
+    /** @var \Drupal\webform\WebformSubmissionInterface $webform_submission */
+    $webform_submission = WebformSubmission::create($values);
+    $webform_submission->save();
+  }
+}
+
+/**
+ * Update users 200 & 201 to be test users with testable roles, interests, etc.
+ * A behat test then checks that these users have the correct values.
+ */
+function amp_dev_install_update_dummy_users() {
+  $users = array(
+    array(
+      'id' => 200,
+      'first_name' => 'Walnut',
+      'last_name' => 'Pie',
+      'field_institution' => 'institution-for-walnut-pie',
+      'name' => 'test_walnut_pie',
+      'email' => 'walnut@pie.org',
+      'roles' => array('affinity_group_leader', 'student'),
+      'field_academic_status' => 'third',
+      'affinity_group' => array('DELTA'),
+      'interest' => array('science gateway', 'access-acount'),
+      'skill' => array('bioinformatics', 'astrophysics'),
+    ),
+    array(
+      'id' => 201,
+      'first_name' => 'Pecan',
+      'last_name' => 'Pie',
+      'field_institution' => 'institution-for-pecan-pie',
+      'name' => 'test_pecan_pie',
+      'email' => 'pecan@pie.org',
+      'roles' => array('campuschampionsadmin', 'ccmnet_pm'),
+      'affinity_group' => array('DELTA', 'Rockfish'),
+      'interest' => array('data-management-software', 'distributed-computing'),
+    )
+  );
+
+  foreach ($users as $user_data) {
+
+    $user = User::load($user_data['id']);
+
+    $user->set('field_user_first_name', $user_data['first_name']);
+    $user->set('field_user_last_name', $user_data['last_name']);
+    $user->set('field_user_last_name', $user_data['last_name']);
+    $user->set('field_institution', $user_data['field_institution']);
+    $user->set('mail', $user_data['email']);
+    $user->set('pass', \Drupal::service('password_generator')->generate());
+    $user->set('status', 1);
+    $user->set('roles', $user_data['roles']);
+    if (array_key_exists('field_academic_status', $user_data)) {
+      $user->set('field_academic_status', $user_data['field_academic_status']);
+    }
+    $user->save();
+
+    // Set flags on the following categories:
+    foreach (['interest', 'skill', 'affinity_group'] as $flag_name) {
+      amp_dev_install_user_set_flag($user, $user_data, $flag_name);
+    }
+
+    // $msg = __FUNCTION__ . "() - created user with email = "  . $user_data['email']
+    //   . ' -- ' . basename(__FILE__) . ':' . __LINE__;
+    // \Drupal::logger('amp_dev.install')->notice($msg);
+    // \Drupal::messenger()->addStatus($msg);
+  }
+}
+
+/**
+ * Helper function to update flags when modifying a test user.
+ */
+function amp_dev_install_user_set_flag($user, $user_data, $flag_name) {
+  $flag_service = \Drupal::service('flag');
+  if (array_key_exists($flag_name, $user_data)) {
+    foreach ($user_data[$flag_name] as $tax_term) {
+      $taxonomy_entity = \Drupal::entityTypeManager()
+        ->getStorage('taxonomy_term')
+        ->loadByProperties(['name' => $tax_term]);
+      $taxonomy_entity = reset($taxonomy_entity);
+
+      if ($taxonomy_entity === FALSE) {
+        $msg = __FUNCTION__ . "() -- taxonomy term '$tax_term' not found"
+          . ' -- ' . basename(__FILE__) . ':' . __LINE__;
+        \Drupal::logger('amp_dev.install')->error($msg);
+        \Drupal::messenger()->addError($msg);
+      } else {
+        $tax_flag_service = $flag_service->getFlagById($flag_name);
+        $already_flagged = $flag_service->getFlagging($tax_flag_service, $taxonomy_entity, $user);
+        if (!$already_flagged) {
+          $flag_service->flag($tax_flag_service, $taxonomy_entity, $user);
+        }
+      }
+    }
+  }
+}
+
+function amp_dev_install_update_user_100() {
+  $user_100 = \Drupal::entityTypeManager()->getStorage('user')->load(100);
+  $user_100->set('field_user_first_name', 'Julie');
+  $user_100->set('field_user_last_name', 'Ma');
+  $user_100->set('field_institution', 'MGHPCC');
+  $user_100->save();
+
+  // $msg = __FUNCTION__ . "() - updated user 100 "
+  //   . ' -- ' . basename(__FILE__) . ':' . __LINE__;
+  // \Drupal::logger('amp_dev.install')->notice($msg);
 }
