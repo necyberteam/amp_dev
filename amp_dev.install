@@ -173,10 +173,10 @@ function amp_dev_install_update_dummy_users() {
       amp_dev_install_user_set_flag($user, $user_data, $flag_name);
     }
 
-    $msg = __FUNCTION__ . "() - created user with email = "  . $user_data['email']
-      . ' -- ' . basename(__FILE__) . ':' . __LINE__;
-    \Drupal::logger('amp_dev.install')->notice($msg);
-    \Drupal::messenger()->addStatus($msg);
+    // $msg = __FUNCTION__ . "() - created user with email = "  . $user_data['email']
+    //   . ' -- ' . basename(__FILE__) . ':' . __LINE__;
+    // \Drupal::logger('amp_dev.install')->notice($msg);
+    // \Drupal::messenger()->addStatus($msg);
   }
 }
 
