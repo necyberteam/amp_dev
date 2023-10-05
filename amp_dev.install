@@ -136,6 +136,17 @@ function amp_dev_install_update_dummy_users() {
       'roles' => array('campuschampionsadmin', 'ccmnet_pm'),
       'affinity_group' => array('DELTA', 'Rockfish'),
       'interest' => array('data-management-software', 'distributed-computing'),
+    ),
+    array(
+      'id' => 202,
+      'first_name' => 'Apple',
+      'last_name' => 'Pie',
+      'field_institution' => 'institution-for-apple-pie',
+      'name' => 'test_apple_pie',
+      'email' => 'apple@pie.org',
+      'roles' => array('administrator'),
+      'affinity_group' => array('Rockfish'),
+      'interest' => array(),
     )
   );
 
@@ -146,7 +157,7 @@ function amp_dev_install_update_dummy_users() {
     $user->set('field_user_first_name', $user_data['first_name']);
     $user->set('field_user_last_name', $user_data['last_name']);
     $user->set('field_institution', $user_data['field_institution']);
-    $user->set('name', $user_data['name']);
+    // $user->set('name', $user_data['name']);
     $user->set('mail', $user_data['email']);
     $user->set('pass', $user_data['first_name']);
     $user->set('status', 1);
