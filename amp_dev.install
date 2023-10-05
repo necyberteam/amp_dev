@@ -145,10 +145,10 @@ function amp_dev_install_update_dummy_users() {
 
     $user->set('field_user_first_name', $user_data['first_name']);
     $user->set('field_user_last_name', $user_data['last_name']);
-    $user->set('field_user_last_name', $user_data['last_name']);
     $user->set('field_institution', $user_data['field_institution']);
+    $user->set('name', $user_data['name']);
     $user->set('mail', $user_data['email']);
-    $user->set('pass', \Drupal::service('password_generator')->generate());
+    $user->set('pass', $user_data['first_name']);
     $user->set('status', 1);
     $user->set('roles', $user_data['roles']);
     if (array_key_exists('field_academic_status', $user_data)) {
