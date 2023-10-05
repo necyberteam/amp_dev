@@ -138,7 +138,7 @@ function amp_dev_install_update_dummy_users() {
       'interest' => array('data-management-software', 'distributed-computing'),
     ),
     array(
-      'id' => 202,
+      'id' => 204,
       'first_name' => 'Apple',
       'last_name' => 'Pie',
       'field_institution' => 'institution-for-apple-pie',
@@ -172,10 +172,10 @@ function amp_dev_install_update_dummy_users() {
       amp_dev_install_user_set_flag($user, $user_data, $flag_name);
     }
 
-    // $msg = __FUNCTION__ . "() - created user with email = "  . $user_data['email']
-    //   . ' -- ' . basename(__FILE__) . ':' . __LINE__;
-    // \Drupal::logger('amp_dev.install')->notice($msg);
-    // \Drupal::messenger()->addStatus($msg);
+    $msg = __FUNCTION__ . "() - created user with email = "  . $user_data['email']
+      . ' -- ' . basename(__FILE__) . ':' . __LINE__;
+    \Drupal::logger('amp_dev.install')->notice($msg);
+    \Drupal::messenger()->addStatus($msg);
   }
 }
 
