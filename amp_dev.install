@@ -77,6 +77,7 @@ function amp_dev_install_create_dummy_ci_links() {
     $webform = Webform::load($webform_id);
     if ($webform->hasSubmissions()) {
       $query = \Drupal::entityQuery('webform_submission')
+        ->accessCheck(TRUE)
         ->condition('webform_id', $webform_id);
       $result = $query->execute();
       foreach ($result as $item) {
