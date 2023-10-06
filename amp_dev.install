@@ -1,9 +1,8 @@
 <?php
 
-use Drupal\Core\Link;
-use Drupal\Core\Url;
-
-
+/**
+ * @file
+ */
 
 use Drupal\user\Entity\User;
 use Drupal\webform\Entity\Webform;
@@ -22,18 +21,21 @@ function amp_dev_install() {
   // Disable constant contact cron run.
   \Drupal::state()->set('access_affinitygroup.alloc_cron_disable', TRUE);
 
-  amp_dev_install_tagged_resource();
-  amp_dev_install_create_dummy_ci_links();
+  // amp_dev_install_tagged_resource();
+  // amp_dev_install_create_dummy_ci_links();
   amp_dev_install_update_dummy_users();
   amp_dev_install_update_user_100();
 }
 
+/**
+ *
+ */
 function amp_dev_install_tagged_resource() {
-  #creating a resource that has a tag on it
-  // Example IDs
+  // Creating a resource that has a tag on it
+  // Example IDs.
   $webform_id = 'resource';
   $webform = Webform::load($webform_id);
-  #kint($webform);
+  // kint($webform);
   // Create webform submission.
   $values = [
     'webform_id' => $webform->id(),
@@ -41,22 +43,22 @@ function amp_dev_install_tagged_resource() {
       'approved' => 'Approved',
       'title' => 'Cybersecurity Resource Center',
       'category' => 'learning',
-      #ai tag
+      // Ai tag.
       'tags' => ['271'],
-      #beginner
+      // Beginner.
       'skill_level' => ['304'],
       'description' => 'The Cybersecurity Resource Center is one of the best around.
       They are at your service 24/7 and can help very quickly. They are great at what they do!',
-      #'link_to_resource' =>[
-      #'#type' => 'link',
-      #'#title' => 'https://www.opm.gov/cybersecurity/',
-      #'#url' => Url::fromUri('https://www.opm.gov/cybersecurity/'),
-      #'terms' => '0',
-      #]
-      #'link_to_resource' =>[
-      #Link::fromTextAndUrl('https://www.opm.gov/cybersecurity/',Url::fromUri('https://www.opm.gov/cybersecurity/')),
-      #],
-    ]
+      // 'link_to_resource' =>[
+      // '#type' => 'link',
+      // '#title' => 'https://www.opm.gov/cybersecurity/',
+      // '#url' => Url::fromUri('https://www.opm.gov/cybersecurity/'),
+      // 'terms' => '0',
+      // ]
+      // 'link_to_resource' =>[
+      // Link::fromTextAndUrl('https://www.opm.gov/cybersecurity/',Url::fromUri('https://www.opm.gov/cybersecurity/')),
+      // ],
+    ],
   ];
 
   /** @var \Drupal\webform\WebformSubmissionInterface $webform_submission */
@@ -64,6 +66,9 @@ function amp_dev_install_tagged_resource() {
   $webform_submission->save();
 }
 
+/**
+ *
+ */
 function amp_dev_install_create_dummy_ci_links() {
 
   $dummy_ci_links = [
@@ -81,7 +86,7 @@ function amp_dev_install_create_dummy_ci_links() {
         ->condition('webform_id', $webform_id);
       $result = $query->execute();
       foreach ($result as $item) {
-        $submission = \Drupal\webform\Entity\WebformSubmission::load($item);
+        $submission = WebformSubmission::load($item);
         $submission_data = $submission->getData();
 
         if ($submission_data['title'] === $dummy_ci_link['title']) {
@@ -113,43 +118,43 @@ function amp_dev_install_create_dummy_ci_links() {
  * A behat test then checks that these users have the correct values.
  */
 function amp_dev_install_update_dummy_users() {
-  $users = array(
-    array(
+  $users = [
+    [
       'id' => 200,
       'first_name' => 'Walnut',
       'last_name' => 'Pie',
       'field_institution' => 'institution-for-walnut-pie',
       'name' => 'test_walnut_pie',
       'email' => 'walnut@pie.org',
-      'roles' => array('affinity_group_leader', 'student'),
+      'roles' => ['affinity_group_leader', 'student'],
       'field_academic_status' => 'third',
-      'affinity_group' => array('DELTA'),
-      'interest' => array('science gateway', 'access-acount'),
-      'skill' => array('bioinformatics', 'astrophysics'),
-    ),
-    array(
+      'affinity_group' => ['DELTA'],
+      'interest' => ['science gateway', 'access-acount'],
+      'skill' => ['bioinformatics', 'astrophysics'],
+    ],
+    [
       'id' => 201,
       'first_name' => 'Pecan',
       'last_name' => 'Pie',
       'field_institution' => 'institution-for-pecan-pie',
       'name' => 'test_pecan_pie',
       'email' => 'pecan@pie.org',
-      'roles' => array('campuschampionsadmin', 'ccmnet_pm'),
-      'affinity_group' => array('DELTA', 'Rockfish'),
-      'interest' => array('data-management-software', 'distributed-computing'),
-    ),
-    array(
+      'roles' => ['campuschampionsadmin', 'ccmnet_pm'],
+      'affinity_group' => ['DELTA', 'Rockfish'],
+      'interest' => ['data-management-software', 'distributed-computing'],
+    ],
+    [
       'id' => 204,
       'first_name' => 'Apple',
       'last_name' => 'Pie',
       'field_institution' => 'institution-for-apple-pie',
       'name' => 'test_apple_pie',
       'email' => 'apple@pie.org',
-      'roles' => array('administrator'),
-      'affinity_group' => array('Rockfish'),
-      'interest' => array(),
-    )
-  );
+      'roles' => ['administrator'],
+      'affinity_group' => ['Rockfish'],
+      'interest' => [],
+    ],
+  ];
 
   foreach ($users as $user_data) {
 
@@ -197,7 +202,8 @@ function amp_dev_install_user_set_flag($user, $user_data, $flag_name) {
           . ' -- ' . basename(__FILE__) . ':' . __LINE__;
         \Drupal::logger('amp_dev.install')->error($msg);
         \Drupal::messenger()->addError($msg);
-      } else {
+      }
+      else {
         $tax_flag_service = $flag_service->getFlagById($flag_name);
         $already_flagged = $flag_service->getFlagging($tax_flag_service, $taxonomy_entity, $user);
         if (!$already_flagged) {
@@ -208,6 +214,9 @@ function amp_dev_install_user_set_flag($user, $user_data, $flag_name) {
   }
 }
 
+/**
+ *
+ */
 function amp_dev_install_update_user_100() {
   $user_100 = \Drupal::entityTypeManager()->getStorage('user')->load(100);
   $user_100->set('field_user_first_name', 'Julie');
