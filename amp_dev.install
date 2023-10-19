@@ -25,6 +25,54 @@ function amp_dev_install() {
   // amp_dev_install_create_dummy_ci_links();
   amp_dev_install_update_dummy_users();
   amp_dev_install_update_user_100();
+  // amp_dev_install_add_test_users();
+}
+
+/**
+ * Add test users.  As of 10/18/2023, the $user->save() call is not working.
+ * The "$user->set('name',..." line is causing the error.
+ *
+ * @return void
+ */
+function amp_dev_install_add_test_users() {
+
+  $users = [
+    [
+      'first_name' => 'administrator',
+      'last_name' => 'test',
+      'field_institution' => 'institution-for-administrator-test-user',
+      'name' => 'administrator-test-user',
+      'email' => 'administrator@testing.com',
+      'roles' => ['administrator'],
+    ],
+    [
+      'first_name' => 'authenticated',
+      'last_name' => 'test',
+      'field_institution' => 'institution-for-authenticated-test-user',
+      'name' => 'authenticated-test-user',
+      'email' => 'authenticated@testing.com',
+    ]
+  ];
+
+  foreach ($users as $user_data) {
+    $user = User::create();
+    $user->set('status', 1);
+    $user->set('field_user_first_name', $user_data['first_name']);
+    $user->set('field_user_last_name', $user_data['last_name']);
+    $user->set('field_institution', $user_data['field_institution']);
+    $user->set('name', $user_data['name']);
+    $user->set('mail', $user_data['email']);
+    $user->set('pass', $user_data['first_name']);
+    if (isset($user_data['roles'])) {
+      $user->set('roles', $user_data['roles']);
+    }
+    $user->save();
+
+    $msg = __FUNCTION__ . "() - created user " . $user_data['name']
+      . ' -- ' . basename(__FILE__) . ':' . __LINE__;
+    \Drupal::logger('amp_dev.install')->notice($msg);
+    \Drupal::messenger()->addStatus($msg);
+  }
 }
 
 /**
@@ -202,8 +250,7 @@ function amp_dev_install_user_set_flag($user, $user_data, $flag_name) {
           . ' -- ' . basename(__FILE__) . ':' . __LINE__;
         \Drupal::logger('amp_dev.install')->error($msg);
         \Drupal::messenger()->addError($msg);
-      }
-      else {
+      } else {
         $tax_flag_service = $flag_service->getFlagById($flag_name);
         $already_flagged = $flag_service->getFlagging($tax_flag_service, $taxonomy_entity, $user);
         if (!$already_flagged) {
