@@ -124,8 +124,11 @@ function amp_dev_install_update_dummy_users() {
       'first_name' => 'Walnut',
       'last_name' => 'Pie',
       'field_institution' => 'institution-for-walnut-pie',
+      'field_access_organization' => ['4300'], // '4300' is the ID for 'MGHPCC'
       'name' => 'test_walnut_pie',
       'email' => 'walnut@pie.org',
+      'preferred_pronouns' => 'they/them',
+      'bio' => 'I am a pie',
       'roles' => ['affinity_group_leader', 'student'],
       'field_academic_status' => 'third',
       'affinity_group' => ['DELTA'],
@@ -137,7 +140,10 @@ function amp_dev_install_update_dummy_users() {
       'first_name' => 'Pecan',
       'last_name' => 'Pie',
       'field_institution' => 'institution-for-pecan-pie',
+      'field_access_organization' => ['4300'], // '4300' is the ID for 'MGHPCC'
       'name' => 'test_pecan_pie',
+      'preferred_pronouns' => 'they/them',
+      'bio' => 'I am a pie',
       'email' => 'pecan@pie.org',
       'roles' => ['campuschampionsadmin', 'ccmnet_pm'],
       'affinity_group' => ['DELTA', 'Rockfish'],
@@ -148,7 +154,10 @@ function amp_dev_install_update_dummy_users() {
       'first_name' => 'Apple',
       'last_name' => 'Pie',
       'field_institution' => 'institution-for-apple-pie',
+      'field_access_organization' => ['4300'], // '4300' is the ID for 'MGHPCC'
       'name' => 'test_apple_pie',
+      'preferred_pronouns' => 'they/them',
+      'bio' => 'I am a pie',
       'email' => 'apple@pie.org',
       'roles' => ['administrator'],
       'affinity_group' => ['Rockfish'],
@@ -163,6 +172,9 @@ function amp_dev_install_update_dummy_users() {
     $user->set('field_user_first_name', $user_data['first_name']);
     $user->set('field_user_last_name', $user_data['last_name']);
     $user->set('field_institution', $user_data['field_institution']);
+    $user->set('field_access_organization', $user_data['field_access_organization']);
+    $user->set('field_user_preferred_pronouns', $user_data['preferred_pronouns']);
+    $user->set('field_user_bio', $user_data['bio']);
     // $user->set('name', $user_data['name']);
     $user->set('mail', $user_data['email']);
     $user->set('pass', $user_data['first_name']);
