@@ -72,7 +72,7 @@ function amp_dev_install_tagged_resource() {
 function amp_dev_install_create_dummy_ci_links() {
 
   $dummy_ci_links = [
-    ['title' => 'ci-link-for-user-200', 'uid' => 200],
+    ['title' => 'ci-link-for-user-200', 'uid' => 199],
     ['title' => 'ci-link-for-user-201', 'uid' => 201],
   ];
 
@@ -114,13 +114,13 @@ function amp_dev_install_create_dummy_ci_links() {
 }
 
 /**
- * Update users 200 & 201 to be test users with testable roles, interests, etc.
+ * Update users 199 & 201 to be test users with testable roles, interests, etc.
  * A behat test then checks that these users have the correct values.
  */
 function amp_dev_install_update_dummy_users() {
   $users = [
     [
-      'id' => 200,
+      'id' => 199,
       'first_name' => 'Walnut',
       'last_name' => 'Pie',
       'field_institution' => 'institution-for-walnut-pie',
