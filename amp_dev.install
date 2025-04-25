@@ -23,8 +23,9 @@ function amp_dev_install() {
 
   // amp_dev_install_tagged_resource();
   // amp_dev_install_create_dummy_ci_links();
-  amp_dev_install_update_dummy_users();
   amp_dev_install_update_user_100();
+  amp_dev_install_update_dummy_users();
+  amp_dev_install_update_user_101();
 }
 
 /**
@@ -227,16 +228,35 @@ function amp_dev_install_user_set_flag($user, $user_data, $flag_name) {
 }
 
 /**
- *
+ * Set all user__field_user_first_name to default.
  */
 function amp_dev_install_update_user_100() {
+  amp_dev_dbupdate('user__field_user_first_name', 'field_user_first_name_value', 'Lux')
+  amp_dev_dbupdate('registrant__field_first_name', 'field_first_name_value', 'Lux')
+  amp_dev_dbupdate('registrant_revision__field_first_name', 'field_first_name_value', 'Lux')
+  amp_dev_dbupdate('user__field_user_last_name', 'field_user_last_name_value', 'Rivers')
+  amp_dev_dbupdate('registrant__field_last_name', 'field_last_name_value', 'Rivers')
+  amp_dev_dbupdate('registrant_revision__field_last_name', 'field_last_name_value', 'Rivers')
+}
+
+/**
+ * Db mass update.
+ */
+function amp_dev_dbupdate($table, $field, $value) {
+  $update = \Drupal::database()->update($table)
+  ->fields([
+    $field => $value,
+  ])
+  ->execute();
+}
+
+/**
+ * Set Julie's name.
+ */
+function amp_dev_install_update_user_101() {
   $user_100 = \Drupal::entityTypeManager()->getStorage('user')->load(100);
   $user_100->set('field_user_first_name', 'Julie');
   $user_100->set('field_user_last_name', 'Ma');
   $user_100->set('field_institution', 'MGHPCC');
   $user_100->save();
-
-  // $msg = __FUNCTION__ . "() - updated user 100 "
-  //   . ' -- ' . basename(__FILE__) . ':' . __LINE__;
-  // \Drupal::logger('amp_dev.install')->notice($msg);
 }
