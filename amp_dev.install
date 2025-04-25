@@ -164,6 +164,20 @@ function amp_dev_install_update_dummy_users() {
       'affinity_group' => ['Rockfish'],
       'interest' => [],
     ],
+    [
+      'id' => 1998,
+      'first_name' => 'Test',
+      'last_name' => 'Smith',
+      'field_institution' => 'Smith U',
+      'field_access_organization' => ['4300'], // '4300' is the ID for 'MGHPCC'
+      'name' => 'TestSmith',
+      'preferred_pronouns' => 'they/them',
+      'bio' => 'Average person',
+      'email' => 'test@sweetandfizzy.com',
+      'roles' => ['administrator'],
+      'affinity_group' => ['Rockfish'],
+      'interest' => [],
+    ],
   ];
 
   foreach ($users as $user_data) {
