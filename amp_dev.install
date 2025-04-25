@@ -245,12 +245,12 @@ function amp_dev_install_user_set_flag($user, $user_data, $flag_name) {
  * Set all user__field_user_first_name to default.
  */
 function amp_dev_install_update_user_100() {
-  amp_dev_dbupdate('user__field_user_first_name', 'field_user_first_name_value', 'Lux')
-  amp_dev_dbupdate('registrant__field_first_name', 'field_first_name_value', 'Lux')
-  amp_dev_dbupdate('registrant_revision__field_first_name', 'field_first_name_value', 'Lux')
-  amp_dev_dbupdate('user__field_user_last_name', 'field_user_last_name_value', 'Rivers')
-  amp_dev_dbupdate('registrant__field_last_name', 'field_last_name_value', 'Rivers')
-  amp_dev_dbupdate('registrant_revision__field_last_name', 'field_last_name_value', 'Rivers')
+  amp_dev_dbupdate('user__field_user_first_name', 'field_user_first_name_value', 'Lux');
+  amp_dev_dbupdate('registrant__field_first_name', 'field_first_name_value', 'Lux');
+  amp_dev_dbupdate('registrant_revision__field_first_name', 'field_first_name_value', 'Lux');
+  amp_dev_dbupdate('user__field_user_last_name', 'field_user_last_name_value', 'Rivers');
+  amp_dev_dbupdate('registrant__field_last_name', 'field_last_name_value', 'Rivers');
+  amp_dev_dbupdate('registrant_revision__field_last_name', 'field_last_name_value', 'Rivers');
 }
 
 /**
