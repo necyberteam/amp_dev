@@ -178,6 +178,16 @@ function amp_dev_install_update_dummy_users() {
       'affinity_group' => ['Rockfish'],
       'interest' => [],
     ],
+    [
+      'id' => 1373,
+      'first_name' => 'Andrew',
+      'last_name' => 'Pasquale',
+    ],
+    [
+      'id' => 4295,
+      'first_name' => 'Jacob',
+      'last_name' => 'Fosso Tande',
+    ],
   ];
 
   foreach ($users as $user_data) {
