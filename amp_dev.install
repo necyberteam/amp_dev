@@ -125,7 +125,8 @@ function amp_dev_install_update_dummy_users() {
       'first_name' => 'Walnut',
       'last_name' => 'Pie',
       'field_institution' => 'institution-for-walnut-pie',
-      'field_access_organization' => ['4300'], // '4300' is the ID for 'MGHPCC'
+      // '4300' is the ID for 'MGHPCC'
+      'field_access_organization' => ['4300'],
       'name' => 'test_walnut_pie',
       'email' => 'walnut@pie.org',
       'preferred_pronouns' => 'they/them',
@@ -141,7 +142,8 @@ function amp_dev_install_update_dummy_users() {
       'first_name' => 'Pecan',
       'last_name' => 'Pie',
       'field_institution' => 'institution-for-pecan-pie',
-      'field_access_organization' => ['4300'], // '4300' is the ID for 'MGHPCC'
+      // '4300' is the ID for 'MGHPCC'
+      'field_access_organization' => ['4300'],
       'name' => 'test_pecan_pie',
       'preferred_pronouns' => 'they/them',
       'bio' => 'I am a pie',
@@ -155,7 +157,8 @@ function amp_dev_install_update_dummy_users() {
       'first_name' => 'Apple',
       'last_name' => 'Pie',
       'field_institution' => 'institution-for-apple-pie',
-      'field_access_organization' => ['4300'], // '4300' is the ID for 'MGHPCC'
+      // '4300' is the ID for 'MGHPCC'
+      'field_access_organization' => ['4300'],
       'name' => 'test_apple_pie',
       'preferred_pronouns' => 'they/them',
       'bio' => 'I am a pie',
@@ -169,7 +172,8 @@ function amp_dev_install_update_dummy_users() {
       'first_name' => 'Test',
       'last_name' => 'Smith',
       'field_institution' => 'Smith U',
-      'field_access_organization' => ['4300'], // '4300' is the ID for 'MGHPCC'
+      // '4300' is the ID for 'MGHPCC'
+      'field_access_organization' => ['4300'],
       'name' => 'TestSmith',
       'preferred_pronouns' => 'they/them',
       'bio' => 'Average person',
@@ -182,6 +186,8 @@ function amp_dev_install_update_dummy_users() {
       'id' => 1373,
       'first_name' => 'Andrew',
       'last_name' => 'Pasquale',
+      // "Massachusetts Green High Performance Computing Center"
+      'field_access_organization' => ['4191'],
     ],
     [
       'id' => 4295,
@@ -268,10 +274,10 @@ function amp_dev_install_update_user_100() {
  */
 function amp_dev_dbupdate($table, $field, $value) {
   $update = \Drupal::database()->update($table)
-  ->fields([
-    $field => $value,
-  ])
-  ->execute();
+    ->fields([
+      $field => $value,
+    ])
+    ->execute();
 }
 
 /**
