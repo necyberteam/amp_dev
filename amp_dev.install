@@ -7,6 +7,7 @@
 use Drupal\user\Entity\User;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\Entity\WebformSubmission;
+use Drupal\node\Entity\Node;
 
 /**
  * @file
@@ -26,6 +27,10 @@ function amp_dev_install() {
   amp_dev_install_update_user_100();
   amp_dev_install_update_dummy_users();
   amp_dev_install_update_user_101();
+
+  // Create test content for Cypress tests.
+  amp_dev_install_create_test_announcements();
+  amp_dev_install_create_test_events();
 }
 
 /**
@@ -289,4 +294,254 @@ function amp_dev_install_update_user_101() {
   $user_100->set('field_user_last_name', 'Ma');
   $user_100->set('field_institution', 'MGHPCC');
   $user_100->save();
+}
+
+/**
+ * Create test announcements with different choose_where_to_share_this values.
+ *
+ * These announcements are used by Cypress tests to verify visibility behavior
+ * based on the new field_choose_where_to_share_this field.
+ */
+function amp_dev_install_create_test_announcements() {
+  // Get the 'ai' tag term ID.
+  $ai_tag = \Drupal::entityTypeManager()
+    ->getStorage('taxonomy_term')
+    ->loadByProperties(['name' => 'ai', 'vid' => 'tags']);
+  $ai_tag_id = $ai_tag ? reset($ai_tag)->id() : NULL;
+
+  // Get ACCESS Support affinity group node ID (typically 327).
+  $access_support_ag = \Drupal::entityTypeManager()
+    ->getStorage('node')
+    ->loadByProperties(['type' => 'affinity_group', 'title' => 'ACCESS Support']);
+  $access_support_ag_id = $access_support_ag ? reset($access_support_ag)->id() : NULL;
+
+  $announcements = [
+    [
+      'title' => 'Test Announcement - Main Page Only',
+      'field_choose_where_to_share_this' => ['on_the_announcements_page'],
+      'field_affiliation' => 'Community',
+      'field_tags' => $ai_tag_id ? [$ai_tag_id] : [],
+      'body' => 'This announcement should only appear on the main /announcements page.',
+    ],
+    [
+      'title' => 'Test Announcement - Affinity Group Only',
+      'field_choose_where_to_share_this' => ['on_your_affinity_group_page'],
+      'field_affiliation' => 'Community',
+      'field_affinity_group_node' => $access_support_ag_id ? [$access_support_ag_id] : [],
+      'field_tags' => $ai_tag_id ? [$ai_tag_id] : [],
+      'body' => 'This announcement should only appear on the ACCESS Support affinity group page.',
+    ],
+    [
+      'title' => 'Test Announcement - Both Locations',
+      'field_choose_where_to_share_this' => [
+        'on_the_announcements_page',
+        'on_your_affinity_group_page',
+      ],
+      'field_affiliation' => 'Community',
+      'field_affinity_group_node' => $access_support_ag_id ? [$access_support_ag_id] : [],
+      'field_tags' => $ai_tag_id ? [$ai_tag_id] : [],
+      'body' => 'This announcement should appear on both the main page and the ACCESS Support AG page.',
+    ],
+    [
+      'title' => 'Test Announcement - No Visibility',
+      'field_choose_where_to_share_this' => [],
+      'field_affiliation' => 'Community',
+      'field_tags' => $ai_tag_id ? [$ai_tag_id] : [],
+      'body' => 'This announcement should not appear on any listing pages.',
+    ],
+    [
+      'title' => 'Test Announcement - Email Only',
+      'field_choose_where_to_share_this' => ['email_to_your_affinity_group'],
+      'field_affiliation' => 'Community',
+      'field_affinity_group_node' => $access_support_ag_id ? [$access_support_ag_id] : [],
+      'field_tags' => $ai_tag_id ? [$ai_tag_id] : [],
+      'body' => 'This announcement should only be emailed, not shown on any pages.',
+    ],
+    [
+      'title' => 'Test Announcement - Digest Only',
+      'field_choose_where_to_share_this' => ['in_the_access_support_bi_weekly_digest'],
+      'field_affiliation' => 'Community',
+      'field_tags' => $ai_tag_id ? [$ai_tag_id] : [],
+      'body' => 'This announcement should only appear in the bi-weekly digest.',
+    ],
+  ];
+
+  foreach ($announcements as $announcement_data) {
+    // Check if announcement already exists, delete if found.
+    $existing = \Drupal::entityTypeManager()
+      ->getStorage('node')
+      ->loadByProperties([
+        'type' => 'access_news',
+        'title' => $announcement_data['title'],
+      ]);
+
+    if ($existing) {
+      foreach ($existing as $node) {
+        $node->delete();
+      }
+    }
+
+    // Create new announcement.
+    $node_data = [
+      'type' => 'access_news',
+      'title' => $announcement_data['title'],
+      'field_choose_where_to_share_this' => $announcement_data['field_choose_where_to_share_this'],
+      'field_affiliation' => $announcement_data['field_affiliation'],
+      'field_published_date' => date('Y-m-d'),
+      'body' => [
+        'value' => $announcement_data['body'],
+        'format' => 'basic_html',
+      ],
+      'field_domain_access' => ['amp_cyberinfrastructure_org'],
+      'moderation_state' => 'published',
+      'uid' => 1,
+      'status' => 1,
+    ];
+
+    // Add optional fields if they exist.
+    if (!empty($announcement_data['field_tags'])) {
+      $node_data['field_tags'] = $announcement_data['field_tags'];
+    }
+    if (!empty($announcement_data['field_affinity_group_node'])) {
+      $node_data['field_affinity_group_node'] = $announcement_data['field_affinity_group_node'];
+    }
+
+    $node = Node::create($node_data);
+    $node->save();
+
+    $msg = 'Created test announcement: ' . $announcement_data['title'];
+    \Drupal::logger('amp_dev.install')->notice($msg);
+  }
+}
+
+/**
+ * Create test events with different choose_where_to_share_this values.
+ *
+ * These events are used by Cypress tests to verify visibility behavior
+ * based on the new field_choose_where_to_share_this field.
+ */
+function amp_dev_install_create_test_events() {
+  // Get the 'ai' tag term ID.
+  $ai_tag = \Drupal::entityTypeManager()
+    ->getStorage('taxonomy_term')
+    ->loadByProperties(['name' => 'ai', 'vid' => 'tags']);
+  $ai_tag_id = $ai_tag ? reset($ai_tag)->id() : NULL;
+
+  // Get ACCESS Support affinity group node ID.
+  $access_support_ag = \Drupal::entityTypeManager()
+    ->getStorage('node')
+    ->loadByProperties(['type' => 'affinity_group', 'title' => 'ACCESS Support']);
+  $access_support_ag_id = $access_support_ag ? reset($access_support_ag)->id() : NULL;
+
+  $events = [
+    [
+      'title' => 'Test Event - Main Page Only',
+      'field_choose_where_to_share_this' => ['on_the_announcements_page'],
+      'location' => 'Zoom',
+      'event_type' => 'Training',
+      'affiliation' => 'Community',
+      'summary' => 'This event should only appear on the main /events page.',
+      'description' => 'This is a test event for Cypress testing. It validates that events only appear on the main events page when configured.',
+      'start_date' => date('Y-m-d\TH:i:s', strtotime('tomorrow +1 hour')),
+      'end_date' => date('Y-m-d\TH:i:s', strtotime('tomorrow +3 hours')),
+    ],
+    [
+      'title' => 'Test Event - Affinity Group Only',
+      'field_choose_where_to_share_this' => ['on_your_affinity_group_page'],
+      'location' => 'Zoom',
+      'event_type' => 'Office Hours',
+      'affiliation' => 'Community',
+      'affinity_group' => $access_support_ag_id,
+      'summary' => 'This event should only appear on the ACCESS Support affinity group page.',
+      'description' => 'This is a test event for Cypress testing. It validates that events only appear on affinity group pages when configured.',
+      'start_date' => date('Y-m-d\TH:i:s', strtotime('tomorrow +4 hours')),
+      'end_date' => date('Y-m-d\TH:i:s', strtotime('tomorrow +6 hours')),
+    ],
+    [
+      'title' => 'Test Event - Both Locations',
+      'field_choose_where_to_share_this' => [
+        'on_the_announcements_page',
+        'on_your_affinity_group_page',
+      ],
+      'location' => 'Zoom',
+      'event_type' => 'Conference',
+      'affiliation' => 'Community',
+      'affinity_group' => $access_support_ag_id,
+      'summary' => 'This event should appear on both the main page and the ACCESS Support AG page.',
+      'description' => 'This is a test event for Cypress testing. It validates that events appear in multiple locations when configured.',
+      'start_date' => date('Y-m-d\TH:i:s', strtotime('tomorrow +7 hours')),
+      'end_date' => date('Y-m-d\TH:i:s', strtotime('tomorrow +10 hours')),
+    ],
+    [
+      'title' => 'Test Event - No Visibility',
+      'field_choose_where_to_share_this' => [],
+      'location' => 'Online',
+      'event_type' => 'Training',
+      'affiliation' => 'Community',
+      'summary' => 'This event should not appear on any listing pages.',
+      'description' => 'This is a test event for Cypress testing. It validates that events with no visibility settings do not appear.',
+      'start_date' => date('Y-m-d\TH:i:s', strtotime('tomorrow +11 hours')),
+      'end_date' => date('Y-m-d\TH:i:s', strtotime('tomorrow +12 hours')),
+    ],
+  ];
+
+  foreach ($events as $event_data) {
+    // Check if event series already exists, delete if found.
+    $existing = \Drupal::entityTypeManager()
+      ->getStorage('eventseries')
+      ->loadByProperties([
+        'type' => 'default',
+        'title' => $event_data['title'],
+      ]);
+
+    if ($existing) {
+      foreach ($existing as $series) {
+        // This will also delete associated eventinstances.
+        $series->delete();
+      }
+    }
+
+    // Create event series.
+    $series_data = [
+      'type' => 'default',
+      'title' => $event_data['title'],
+      'recur_type' => 'custom',
+      'field_choose_where_to_share_this' => $event_data['field_choose_where_to_share_this'],
+      'field_summary' => [
+        'value' => $event_data['summary'],
+        'format' => 'basic_html',
+      ],
+      'body' => [
+        'value' => $event_data['description'],
+        'format' => 'basic_html',
+      ],
+      'custom_date' => [
+        'value' => $event_data['start_date'],
+        'end_value' => $event_data['end_date'],
+      ],
+      'field_location' => $event_data['location'],
+      'field_event_type' => $event_data['event_type'],
+      'field_affiliation' => $event_data['affiliation'],
+      'domain_access' => ['amp_cyberinfrastructure_org'],
+      'moderation_state' => 'published',
+      'uid' => 1,
+      'status' => 1,
+    ];
+
+    // Add optional fields.
+    if (!empty($ai_tag_id)) {
+      $series_data['field_tags'] = [$ai_tag_id];
+    }
+    if (!empty($event_data['affinity_group'])) {
+      $series_data['field_affinity_group_node'] = [$event_data['affinity_group']];
+    }
+
+    $series = \Drupal::entityTypeManager()
+      ->getStorage('eventseries')
+      ->create($series_data);
+    $series->save();
+
+    $msg = 'Created test event: ' . $event_data['title'];
+    \Drupal::logger('amp_dev.install')->notice($msg);
+  }
 }
