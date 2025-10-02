@@ -560,14 +560,22 @@ function amp_dev_install_index_test_content() {
   // Index announcements.
   $announcements_index = \Drupal::entityTypeManager()->getStorage('search_api_index')->load('announcements');
   if ($announcements_index) {
-    $announcements_index->indexItems();
-    \Drupal::logger('amp_dev.install')->notice('Indexed announcements in Search API');
+    // Index all queued items (-1 means process all).
+    $indexed_count = $announcements_index->indexItems(-1);
+    \Drupal::logger('amp_dev.install')->notice('Indexed @count announcements in Search API', ['@count' => $indexed_count]);
+  }
+  else {
+    \Drupal::logger('amp_dev.install')->warning('Announcements search index not found');
   }
 
   // Index events.
   $events_index = \Drupal::entityTypeManager()->getStorage('search_api_index')->load('events');
   if ($events_index) {
-    $events_index->indexItems();
-    \Drupal::logger('amp_dev.install')->notice('Indexed events in Search API');
+    // Index all queued items (-1 means process all).
+    $indexed_count = $events_index->indexItems(-1);
+    \Drupal::logger('amp_dev.install')->notice('Indexed @count events in Search API', ['@count' => $indexed_count]);
+  }
+  else {
+    \Drupal::logger('amp_dev.install')->warning('Events search index not found');
   }
 }
