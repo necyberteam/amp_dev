@@ -194,8 +194,8 @@ function amp_dev_install_update_dummy_users() {
       'id' => 1373,
       'first_name' => 'Andrew',
       'last_name' => 'Pasquale',
-      // "Massachusetts Green High Performance Computing Center"
-      'field_access_organization' => ['4191'],
+      // "Sweet and Fizzy"
+      'field_access_organization' => ['11244'],
     ],
     [
       'id' => 4295,
