@@ -446,8 +446,8 @@ function amp_dev_install_create_test_events() {
       'tags' => $ai_tag_id ? [$ai_tag_id] : [],
       'summary' => 'This event should only appear on the main /events page.',
       'description' => 'This is a test event for Cypress testing. It validates that events only appear on the main events page when configured.',
-      'start_date' => date('Y-m-d\TH:i:s', strtotime('tomorrow +1 hour')),
-      'end_date' => date('Y-m-d\TH:i:s', strtotime('tomorrow +3 hours')),
+      'start_date' => date('Y-m-d\TH:i:s', strtotime('+1 week +1 hour')),
+      'end_date' => date('Y-m-d\TH:i:s', strtotime('+1 week +3 hours')),
     ],
     [
       'title' => 'Test Event - Affinity Group Only',
@@ -459,8 +459,8 @@ function amp_dev_install_create_test_events() {
       'tags' => $ai_tag_id ? [$ai_tag_id] : [],
       'summary' => 'This event should only appear on the ACCESS Support affinity group page.',
       'description' => 'This is a test event for Cypress testing. It validates that events only appear on affinity group pages when configured.',
-      'start_date' => date('Y-m-d\TH:i:s', strtotime('tomorrow +4 hours')),
-      'end_date' => date('Y-m-d\TH:i:s', strtotime('tomorrow +6 hours')),
+      'start_date' => date('Y-m-d\TH:i:s', strtotime('+2 weeks +1 hour')),
+      'end_date' => date('Y-m-d\TH:i:s', strtotime('+2 weeks +3 hours')),
     ],
     [
       'title' => 'Test Event - Both Locations',
@@ -475,8 +475,8 @@ function amp_dev_install_create_test_events() {
       'tags' => $ai_tag_id ? [$ai_tag_id] : [],
       'summary' => 'This event should appear on both the main page and the ACCESS Support AG page.',
       'description' => 'This is a test event for Cypress testing. It validates that events appear in multiple locations when configured.',
-      'start_date' => date('Y-m-d\TH:i:s', strtotime('tomorrow +7 hours')),
-      'end_date' => date('Y-m-d\TH:i:s', strtotime('tomorrow +10 hours')),
+      'start_date' => date('Y-m-d\TH:i:s', strtotime('+3 weeks +1 hour')),
+      'end_date' => date('Y-m-d\TH:i:s', strtotime('+3 weeks +3 hours')),
     ],
     [
       'title' => 'Test Event - No Visibility',
@@ -487,8 +487,8 @@ function amp_dev_install_create_test_events() {
       'tags' => $ai_tag_id ? [$ai_tag_id] : [],
       'summary' => 'This event should not appear on any listing pages.',
       'description' => 'This is a test event for Cypress testing. It validates that events with no visibility settings do not appear.',
-      'start_date' => date('Y-m-d\TH:i:s', strtotime('tomorrow +11 hours')),
-      'end_date' => date('Y-m-d\TH:i:s', strtotime('tomorrow +12 hours')),
+      'start_date' => date('Y-m-d\TH:i:s', strtotime('+4 weeks +1 hour')),
+      'end_date' => date('Y-m-d\TH:i:s', strtotime('+4 weeks +3 hours')),
     ],
   ];
 
