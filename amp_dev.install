@@ -763,6 +763,7 @@ function amp_dev_install_create_rp_alpha() {
       'uri' => 'https://alpha.test.example.edu/software',
       'title' => 'View all available software',
     ],
+    'field_domain_access' => ['amp_cyberinfrastructure_org'],
   ];
 
   if ($node) {
@@ -809,6 +810,7 @@ function amp_dev_install_create_rp_beta() {
       'value' => '<p>Test Resource Beta is a CPU-only cluster for general-purpose computing workloads. This test resource has minimal documentation to verify that the template handles sparse data gracefully.</p>',
       'format' => 'full_html',
     ],
+    'field_domain_access' => ['amp_cyberinfrastructure_org'],
   ];
 
   if ($node) {
@@ -870,6 +872,7 @@ function amp_dev_install_create_rp_gamma() {
     'field_rp_account_required' => FALSE,
     'field_rp_support_links' => [['uri' => 'https://gamma.test.example.edu/support', 'title' => 'Support Portal']],
     'field_rp_office_hours' => ['uri' => 'https://gamma.test.example.edu/office-hours', 'title' => 'Tue/Thu 10 AM - 12 PM CST'],
+    'field_domain_access' => ['amp_cyberinfrastructure_org'],
   ];
 
   if ($node) {
