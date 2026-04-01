@@ -31,6 +31,7 @@ function amp_dev_install() {
   // Create test content for Cypress tests.
   amp_dev_install_create_test_announcements();
   amp_dev_install_create_test_events();
+  amp_dev_install_create_rp_docs_test_data();
 
   // Index the test content in Search API.
   amp_dev_install_index_test_content();
@@ -578,4 +579,18 @@ function amp_dev_install_index_test_content() {
   else {
     \Drupal::logger('amp_dev.install')->warning('Events search index not found');
   }
+}
+
+/**
+ * Create RP documentation test data using the operations_cider scaffold command.
+ */
+function amp_dev_install_create_rp_docs_test_data() {
+  if (!class_exists('\Drupal\operations_cider\Commands\RpDocsScaffoldCommands')) {
+    \Drupal::logger('amp_dev.install')->warning('RpDocsScaffoldCommands not available, skipping RP docs test data');
+    return;
+  }
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $scaffold = new \Drupal\operations_cider\Commands\RpDocsScaffoldCommands($entity_type_manager);
+  $scaffold->setLogger(\Drupal::logger('amp_dev.install'));
+  $scaffold->scaffold();
 }
