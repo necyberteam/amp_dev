@@ -593,6 +593,7 @@ function amp_dev_install_create_rp_docs_test_data() {
   amp_dev_install_create_rp_alpha();
   amp_dev_install_create_rp_beta();
   amp_dev_install_create_rp_gamma();
+  amp_dev_install_create_rp_resource_group();
   \Drupal::logger('amp_dev.install')->notice('Scaffolded RP documentation test data');
 }
 
@@ -763,6 +764,7 @@ function amp_dev_install_create_rp_alpha() {
       'uri' => 'https://alpha.test.example.edu/software',
       'title' => 'View all available software',
     ],
+    'field_rp_listing' => TRUE,
     'field_domain_access' => ['amp_cyberinfrastructure_org'],
   ];
 
@@ -810,6 +812,7 @@ function amp_dev_install_create_rp_beta() {
       'value' => '<p>Test Resource Beta is a CPU-only cluster for general-purpose computing workloads. This test resource has minimal documentation to verify that the template handles sparse data gracefully.</p>',
       'format' => 'full_html',
     ],
+    'field_rp_listing' => FALSE,
     'field_domain_access' => ['amp_cyberinfrastructure_org'],
   ];
 
@@ -872,6 +875,7 @@ function amp_dev_install_create_rp_gamma() {
     'field_rp_account_required' => FALSE,
     'field_rp_support_links' => [['uri' => 'https://gamma.test.example.edu/support', 'title' => 'Support Portal']],
     'field_rp_office_hours' => ['uri' => 'https://gamma.test.example.edu/office-hours', 'title' => 'Tue/Thu 10 AM - 12 PM CST'],
+    'field_rp_listing' => TRUE,
     'field_domain_access' => ['amp_cyberinfrastructure_org'],
   ];
 
@@ -893,6 +897,50 @@ function amp_dev_install_create_rp_gamma() {
   $node->save();
 
   \Drupal::logger('amp_dev.install')->notice('Created Test Resource Gamma (nid: ' . $node->id() . ')');
+}
+
+/**
+ * Test Resource Group — groups Alpha and Beta together.
+ */
+function amp_dev_install_create_rp_resource_group() {
+  // Delete existing test resource group.
+  $existing = \Drupal::entityTypeManager()
+    ->getStorage('node')
+    ->loadByProperties([
+      'type' => 'resource_group',
+      'title' => 'Test Resource Group',
+    ]);
+  foreach ($existing as $node) {
+    $node->delete();
+  }
+
+  // Find Alpha and Beta by resource ID.
+  $alpha = _amp_dev_find_resource('test-alpha-9999');
+  $beta = _amp_dev_find_resource('test-beta-9998');
+
+  $resources = [];
+  if ($alpha) {
+    $resources[] = ['target_id' => $alpha->id()];
+  }
+  if ($beta) {
+    $resources[] = ['target_id' => $beta->id()];
+  }
+
+  $node = Node::create([
+    'type' => 'resource_group',
+    'title' => 'Test Resource Group',
+    'status' => 1,
+    'field_rp_description' => [
+      'value' => '<p>A test resource group for CI testing. This group combines Alpha and Beta resources for unified documentation.</p>',
+      'format' => 'full_html',
+    ],
+    'field_cider_resources' => $resources,
+    'field_rp_listing' => TRUE,
+    'field_domain_access' => ['amp_cyberinfrastructure_org'],
+  ]);
+  $node->save();
+
+  \Drupal::logger('amp_dev.install')->notice('Created Test Resource Group (nid: ' . $node->id() . ')');
 }
 
 /**
