@@ -738,6 +738,7 @@ function amp_dev_install_create_rp_alpha() {
     'field_access_org_name' => 'Test University',
     'field_rp_description' => [
       'value' => '<p>Test Resource Alpha is a powerful GPU-accelerated supercomputer funded by a $10 million NSF grant, designed for a broad range of scientific and engineering workloads from traditional HPC simulation to AI and machine learning research.</p><p>Researchers can access Alpha through standard HPC interfaces including Open OnDemand (OOD) and JupyterHub, enabling both command-line and browser-based workflows.</p>',
+      'summary' => 'GPU-accelerated supercomputer for HPC, AI, and machine learning workloads.',
       'format' => 'full_html',
     ],
     'field_rp_ondemand_url' => ['uri' => 'https://ondemand.alpha.test.example.edu', 'title' => 'ACCESS OnDemand'],
@@ -810,6 +811,7 @@ function amp_dev_install_create_rp_beta() {
     'field_access_org_name' => 'Beta State University',
     'field_rp_description' => [
       'value' => '<p>Test Resource Beta is a CPU-only cluster for general-purpose computing workloads. This test resource has minimal documentation to verify that the template handles sparse data gracefully.</p>',
+      'summary' => 'CPU-only cluster for general-purpose computing.',
       'format' => 'full_html',
     ],
     'field_rp_listing' => FALSE,
@@ -869,6 +871,7 @@ function amp_dev_install_create_rp_gamma() {
     'field_access_org_name' => 'Gamma Research Institute',
     'field_rp_description' => [
       'value' => '<p>Test Resource Gamma is a mixed-use cluster with partial documentation. It has storage information but no login, file transfer, or queue data — useful for testing how the template renders when some sections are empty.</p>',
+      'summary' => 'Mixed-use cluster with partial documentation.',
       'format' => 'full_html',
     ],
     'field_rp_mfa_required' => TRUE,
@@ -932,6 +935,7 @@ function amp_dev_install_create_rp_resource_group() {
     'status' => 1,
     'field_rp_description' => [
       'value' => '<p>A test resource group for CI testing. This group combines Alpha and Beta resources for unified documentation.</p>',
+      'summary' => 'A test resource group for CI testing.',
       'format' => 'full_html',
     ],
     'field_cider_resources' => $resources,
