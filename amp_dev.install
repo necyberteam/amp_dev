@@ -744,6 +744,10 @@ function amp_dev_install_create_rp_alpha() {
     'field_rp_ondemand_url' => ['uri' => 'https://ondemand.alpha.test.example.edu', 'title' => 'ACCESS OnDemand'],
     'field_rp_mfa_required' => TRUE,
     'field_rp_account_required' => TRUE,
+    'field_rp_login_text' => [
+      'value' => '<p>Welcome to Alpha. Please review the <a href="https://alpha.test.example.edu/getting-started">getting started guide</a> before logging in for the first time.</p>',
+      'format' => 'full_html',
+    ],
     'field_rp_login_help_links' => [['uri' => 'https://access-ci.org/guides/ssh-keys', 'title' => 'Watch video: INTRODUCTION TO SSH KEYS']],
     'field_rp_account_setup_url' => ['uri' => 'https://alpha.test.example.edu/account', 'title' => 'Set up your Alpha account'],
     'field_rp_support_links' => [
@@ -876,6 +880,8 @@ function amp_dev_install_create_rp_gamma() {
     ],
     'field_rp_mfa_required' => TRUE,
     'field_rp_account_required' => FALSE,
+    'field_rp_login_help_links' => [['uri' => 'https://gamma.test.example.edu/ssh-guide', 'title' => 'Gamma SSH Guide']],
+    'field_rp_account_setup_url' => ['uri' => 'https://gamma.test.example.edu/account', 'title' => 'Set up your Gamma account'],
     'field_rp_support_links' => [['uri' => 'https://gamma.test.example.edu/support', 'title' => 'Support Portal']],
     'field_rp_office_hours' => ['uri' => 'https://gamma.test.example.edu/office-hours', 'title' => 'Tue/Thu 10 AM - 12 PM CST'],
     'field_rp_listing' => TRUE,
