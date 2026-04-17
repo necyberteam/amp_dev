@@ -606,15 +606,17 @@ function amp_dev_install_create_rp_alpha() {
 
   $ssh_logins = [
     _amp_dev_create_paragraph('rp_ssh_login', [
-      'field_rp_ssh_url' => ['uri' => 'https://login01.alpha.test.example.edu', 'title' => 'login01'],
+      'field_rp_ssh_hostname' => 'login01.alpha.test.example.edu',
+      'field_rp_ssh_user_placeholder' => '<your_username>',
       'field_rp_recommended' => TRUE,
     ]),
     _amp_dev_create_paragraph('rp_ssh_login', [
-      'field_rp_ssh_url' => ['uri' => 'https://login02.alpha.test.example.edu', 'title' => 'login02'],
+      'field_rp_ssh_hostname' => 'login02.alpha.test.example.edu',
       'field_rp_recommended' => FALSE,
     ]),
     _amp_dev_create_paragraph('rp_ssh_login', [
-      'field_rp_ssh_url' => ['uri' => 'https://login03.alpha.test.example.edu', 'title' => 'login03'],
+      'field_rp_ssh_hostname' => 'login03.alpha.test.example.edu',
+      'field_rp_ssh_docs_url' => ['uri' => 'https://docs.example.edu/alpha/login03/', 'title' => 'login03 docs'],
       'field_rp_recommended' => FALSE,
     ]),
   ];
@@ -947,6 +949,22 @@ function amp_dev_install_create_rp_resource_group() {
     'field_cider_resources' => $resources,
     'field_rp_listing' => TRUE,
     'field_domain_access' => ['amp_cyberinfrastructure_org'],
+    // Inheritable defaults: child Resources that leave these empty will pick
+    // them up via the preprocess fallback (see asp-theme/aspTheme.theme).
+    // Alpha sets its own support/office/software so it should OVERRIDE these;
+    // Beta sets none of them so it should INHERIT all three from the Group.
+    'field_rp_support_links' => [
+      ['uri' => 'https://group.test.example.edu/user-guide', 'title' => 'Group User Guide'],
+      ['uri' => 'https://group.test.example.edu/tickets', 'title' => 'Group Ticket System'],
+    ],
+    'field_rp_office_hours' => [
+      'uri' => 'https://group.test.example.edu/office-hours',
+      'title' => 'Fri 3-5 PM EST',
+    ],
+    'field_rp_software_list_url' => [
+      'uri' => 'https://group.test.example.edu/software',
+      'title' => 'View all group software',
+    ],
   ]);
   $node->save();
 
