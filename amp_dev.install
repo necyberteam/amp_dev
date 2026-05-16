@@ -161,6 +161,14 @@ function amp_dev_install_update_dummy_users() {
       'roles' => ['campuschampionsadmin', 'ccmnet_pm'],
       'affinity_group' => ['DELTA', 'Rockfish'],
       'interest' => ['data-management-software', 'distributed-computing'],
+      // Region memberships place pecan in the people directories that key
+      // off field_region: ACCESS CSSN (780) for cssn_directory and the
+      // search-api-backed /people view; Open OnDemand (901) for the
+      // /people?f[0]=program:901 facet; CCMNet (835) for /members; and
+      // Northeast (308) for region-scoped block displays. Together these
+      // make pecan a useful subject for tests that assert visibility (or
+      // hidden-ness) across the public people surfaces.
+      'field_region' => [780, 901, 835, 308],
     ],
     [
       'id' => 204,
@@ -223,6 +231,9 @@ function amp_dev_install_update_dummy_users() {
     $user->set('roles', $user_data['roles']);
     if (array_key_exists('field_academic_status', $user_data)) {
       $user->set('field_academic_status', $user_data['field_academic_status']);
+    }
+    if (array_key_exists('field_region', $user_data)) {
+      $user->set('field_region', $user_data['field_region']);
     }
     $user->save();
 
