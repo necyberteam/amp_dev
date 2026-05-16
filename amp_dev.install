@@ -33,6 +33,7 @@ function amp_dev_install() {
   amp_dev_install_create_test_announcements();
   amp_dev_install_create_test_events();
   amp_dev_install_create_rp_docs_test_data();
+  amp_dev_install_create_rp_account_test_data();
 
   // Index the test content in Search API.
   amp_dev_install_index_test_content();
@@ -1048,4 +1049,115 @@ function _amp_dev_clear_paragraphs($node, array $field_names) {
     }
     $node->set($field_name, []);
   }
+}
+
+/**
+ * Seed test fixtures for the RP user account panel (D8-2719).
+ *
+ * Sets a fake xdusage person_id on Walnut and inserts pre-populated rows
+ * into access_user_rp_account for Walnut on test-resource-alpha. Also sets
+ * the user-synced cache marker fresh so the page-render path treats the
+ * data as up-to-date and doesn't try to refresh from external APIs during
+ * cypress test runs.
+ *
+ * Defensive: skips silently if the schema (field or table) isn't yet in
+ * place. The DB-artifact build sequence runs `drush deploy` (which applies
+ * updates 10009 + 10010) before enabling amp_dev, so this should always
+ * find what it needs — but in case the order ever changes, we don't fail.
+ */
+function amp_dev_install_create_rp_account_test_data() {
+  $logger = \Drupal::logger('amp_dev.install');
+
+  // Verify schema is present.
+  $field_storage = \Drupal\field\Entity\FieldStorageConfig::loadByName('user', 'field_xdusage_person_id');
+  if (!$field_storage) {
+    $logger->warning('Skipping RP account fixtures: field_xdusage_person_id not yet defined.');
+    return;
+  }
+  $db = \Drupal::database();
+  if (!$db->schema()->tableExists('access_user_rp_account')) {
+    $logger->warning('Skipping RP account fixtures: access_user_rp_account table not yet created.');
+    return;
+  }
+
+  // Walnut: uid 199 per amp_dev_install_update_dummy_users.
+  $walnut = \Drupal\user\Entity\User::load(199);
+  if (!$walnut) {
+    $logger->warning('Skipping RP account fixtures: test user uid 199 (Walnut) not found.');
+    return;
+  }
+
+  // Find the alpha RP node by title.
+  $nids = \Drupal::entityQuery('node')
+    ->accessCheck(FALSE)
+    ->condition('type', 'access_active_resources_from_cid')
+    ->condition('title', 'Test Resource Alpha')
+    ->range(0, 1)
+    ->execute();
+  $alpha_nid = reset($nids);
+  if (!$alpha_nid) {
+    $logger->warning('Skipping RP account fixtures: Test Resource Alpha node not found.');
+    return;
+  }
+
+  // Set Walnut's xdusage person_id (fake value; never matches real xdusage).
+  $walnut->set('field_xdusage_person_id', 99999);
+  $walnut->set('field_xdusage_person_synced', \Drupal::time()->getRequestTime());
+  $walnut->save();
+
+  // Insert two rows into access_user_rp_account for Walnut on alpha.
+  // Use upsert pattern in case the function is re-run.
+  $now = \Drupal::time()->getRequestTime();
+  $rows = [
+    [
+      'grant_number' => 'TST111',
+      'project_id' => 100001,
+      'resource_id' => 200001,
+      'grant_title' => 'Walnut Test Grant 1',
+      'rp_username' => 'walnut_alpha',
+      'account_state' => 'active',
+      'project_balance' => '5000.0000',
+      'project_end' => '2027-01-01',
+      'project_state' => 'active',
+      'is_expired' => 0,
+      'billable_unit' => 'Core-hours',
+    ],
+    [
+      'grant_number' => 'TST222',
+      'project_id' => 100002,
+      'resource_id' => 200001,
+      'grant_title' => 'Walnut Test Grant 2 (long title that will get truncated for display purposes)',
+      'rp_username' => 'walnut_alpha',
+      'account_state' => 'active',
+      'project_balance' => '12345.6789',
+      'project_end' => '2026-12-31',
+      'project_state' => 'active',
+      'is_expired' => 0,
+      'billable_unit' => 'Core-hours',
+    ],
+  ];
+
+  foreach ($rows as $row) {
+    $db->merge('access_user_rp_account')
+      ->keys([
+        'uid' => 199,
+        'rp_nid' => (int) $alpha_nid,
+        'grant_number' => $row['grant_number'],
+      ])
+      ->fields(array_merge($row, [
+        'synced_at' => $now,
+      ]))
+      ->execute();
+  }
+
+  // Set the user-synced cache marker fresh so the page-render code path
+  // treats Walnut's data as up-to-date and skips the external API refresh.
+  // The cache key matches RpAccountService::SYNC_MARKER_PREFIX.
+  \Drupal::cache()->set(
+    'rp_account:user_synced:199',
+    $now,
+    $now + 86400 // matches RpAccountService::FRESHNESS_TTL
+  );
+
+  $logger->notice('Seeded RP account fixtures for Walnut (uid 199) on Test Resource Alpha (nid: ' . $alpha_nid . ')');
 }

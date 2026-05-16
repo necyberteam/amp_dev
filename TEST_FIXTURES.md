@@ -133,3 +133,37 @@ To update the fixtures:
 - All announcements and events are published and owned by user 1
 - Dates for events are relative (+1 week, +2 weeks, etc.) to ensure they're always in the future
 - The fixtures check for existing content by title and delete it before recreating to avoid duplicates
+
+## RP Account Panel Fixtures (D8-2719)
+
+`walnut@pie.org` (uid 199) has pre-seeded data for the RP account sidebar panel:
+
+- `field_xdusage_person_id = 99999` (fake; never matches real xdusage)
+- Two rows in `access_user_rp_account` against Test Resource Alpha:
+  - Grant `TST111`: title `Walnut Test Grant 1`, username `walnut_alpha`, balance 5,000 Core-hours, ends 2027-01-01
+  - Grant `TST222`: title `Walnut Test Grant 2 (long title that will get truncated for display purposes)`, balance 12,345.6789 Core-hours, ends 2026-12-31
+- The user-synced cache marker is set fresh so the page render path uses
+  the seeded data rather than calling the live xdusage/identity APIs.
+
+### Using the fixture in Cypress tests
+
+```javascript
+describe('RP account panel — populated', () => {
+  beforeEach(() => {
+    cy.loginAs('walnut@pie.org', 'Walnut');
+    cy.visit('/documentation/resources/alpha');
+  });
+
+  it('renders YOUR ACCOUNT panel from the seeded rp_account rows', () => {
+    cy.get('.rp-account-panel', { timeout: 5000 })
+      .should('be.visible')
+      .and('have.attr', 'data-rp-nid');
+    cy.contains('YOUR ACCOUNT ON').should('be.visible');
+    cy.contains('TST111').should('be.visible');
+    cy.contains('Walnut Test Grant 1').should('be.visible');
+    cy.contains('walnut_alpha').should('be.visible');
+  });
+});
+```
+
+The fixture data is seeded by `amp_dev_install_create_rp_account_test_data()` in `amp_dev.install`.
