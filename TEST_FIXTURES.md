@@ -140,8 +140,8 @@ To update the fixtures:
 
 - `field_xdusage_person_id = 99999` (fake; never matches real xdusage)
 - Two rows in `access_user_rp_account` against Test Resource Alpha:
-  - Grant `TST111`: balance 5,000 Core-hours, ends 2027-01-01
-  - Grant `TST222`: balance 12,345.6789 Core-hours, ends 2026-12-31, long title for truncation testing
+  - Grant `TST111`: title `Walnut Test Grant 1`, username `walnut_alpha`, balance 5,000 Core-hours, ends 2027-01-01
+  - Grant `TST222`: title `Walnut Test Grant 2 (long title that will get truncated for display purposes)`, balance 12,345.6789 Core-hours, ends 2026-12-31
 - The user-synced cache marker is set fresh so the page render path uses
   the seeded data rather than calling the live xdusage/identity APIs.
 
@@ -151,18 +151,19 @@ To update the fixtures:
 describe('RP account panel — populated', () => {
   beforeEach(() => {
     cy.loginAs('walnut@pie.org', 'Walnut');
-    cy.visit('/documentation/resources/test-resource-alpha');
+    cy.visit('/documentation/resources/alpha');
   });
 
-  it('shows the populated panel', () => {
-    cy.contains('YOUR ACCOUNT ON');
-    cy.contains('walnut_alpha');
-    cy.contains('TST111');
-    cy.contains('Balance: 5,000 Core-hours');
+  it('renders YOUR ACCOUNT panel from the seeded rp_account rows', () => {
+    cy.get('.rp-account-panel', { timeout: 5000 })
+      .should('be.visible')
+      .and('have.attr', 'data-rp-nid');
+    cy.contains('YOUR ACCOUNT ON').should('be.visible');
+    cy.contains('TST111').should('be.visible');
+    cy.contains('Walnut Test Grant 1').should('be.visible');
+    cy.contains('walnut_alpha').should('be.visible');
   });
 });
 ```
 
-The fixture data is seeded by `amp_dev_install_create_rp_account_test_data()`
-in `amp_dev.install`. To swap to fixture-based tests in this repo, the
-DB artifact must be regenerated first to include the new fixtures.
+The fixture data is seeded by `amp_dev_install_create_rp_account_test_data()` in `amp_dev.install`.
