@@ -877,7 +877,8 @@ function amp_dev_install_create_rp_gamma() {
     _amp_dev_create_paragraph('rp_storage_filesystem', [
       'field_rp_directory' => 'Home',
       'field_rp_fs_path' => '/home/<username>',
-      'field_rp_quota' => '50 GB',
+      'field_rp_quota_size' => 50,
+      'field_rp_quota_inode_amount' => 2000000,
       'field_rp_purge' => 'None',
       'field_rp_backup' => 'Weekly',
       'field_rp_fs_notes' => '',
@@ -885,7 +886,8 @@ function amp_dev_install_create_rp_gamma() {
     _amp_dev_create_paragraph('rp_storage_filesystem', [
       'field_rp_directory' => 'Scratch',
       'field_rp_fs_path' => '/scratch/<username>',
-      'field_rp_quota' => '5 TB',
+      'field_rp_quota_size' => 5000,
+      'field_rp_quota_inode_amount' => 20000000,
       'field_rp_purge' => '60 days',
       'field_rp_backup' => 'None',
       'field_rp_fs_notes' => 'Auto-purge after 60 days of inactivity',
