@@ -703,7 +703,7 @@ function amp_dev_install_create_rp_alpha() {
       'field_rp_gpu_vram' => 80,
       'field_rp_gpus' => 'NVIDIA A100',
       'field_rp_vram' => 256,
-      'field_rp_queue_nodes' => '100',
+      'field_rp_node_count' => 100,
     ]),
     _amp_dev_create_paragraph('rp_queue_spec', [
       'field_rp_queue_name' => 'gpu-large',
@@ -714,7 +714,7 @@ function amp_dev_install_create_rp_alpha() {
       'field_rp_gpu_vram' => 80,
       'field_rp_gpus' => 'NVIDIA A100',
       'field_rp_vram' => 512,
-      'field_rp_queue_nodes' => '20',
+      'field_rp_node_count' => 20,
     ]),
     _amp_dev_create_paragraph('rp_queue_spec', [
       'field_rp_queue_name' => 'cpu-shared',
@@ -724,7 +724,7 @@ function amp_dev_install_create_rp_alpha() {
       'field_rp_gpu_count' => 0,
       'field_rp_gpus' => '',
       'field_rp_vram' => 256,
-      'field_rp_queue_nodes' => '200',
+      'field_rp_node_count' => 200,
     ]),
   ];
 
